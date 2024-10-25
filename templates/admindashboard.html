@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <link rel = "stylesheet"  href = "{{ url_for('static', filename = 'css/admindashboard.css')  }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Real-Time Object Detection</title>
+</head>
+<body>
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid d-flex justify-content-end"> <!-- Use flexbox to align items -->
+            <div class="logout-container">
+                <form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
+                    <button id="logoutButton" type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    
+      
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="video-container bg-dark text-center">
+                    <img id="video" src="{{ '/video_feed_webcam' }}" alt="Webcam Feed" class="img-fluid">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-container bg-light p-3 rounded shadow-sm">
+                    <h2 class="heading">Real-Time Parking Status</h2>
+                    <div class = "row">
+                            <div id="total-parking" class="card card-spacing" style="width: 18rem;">
+                                <div class="circle" id="total-parking-circle">
+                                    <span id="occupied"></span> <!-- Replace with dynamic total -->
+                                </div>
+                                <div class="text-below">Total Occupied Spaces</div>
+                            </div>
+                    
+                            <div id="total-empty" class="card card-spacing" style="width: 18rem;">
+                                <div class="circle" id="total-empty-circle">
+                                    <span id="empty"></span> <!-- Replace with dynamic empty count -->
+                                </div>
+                                <div class="text-below">Total Empty Spaces</div>
+                            </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <h1 class="mt-5 text-center heading">Booking Data</h1>
+        <table class="table table-bordered table-hover mt-2">
+            <thead class="custom-header">
+                <tr>
+                    <th>UserName</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>City</th>
+                    <th>Car no.</th>
+                    <th>Token</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in collection1 %}
+                <tr>
+                    <td>{{ item['_customer_name'] }}</td>
+                    <td>{{ item['arrival_date'] }}</td>
+                    <td>{{ item['arrival_time'] }}</td>
+                    <td>{{ item['city'] }}</td>
+                    <td>{{ item['car_number_plate'] }}</td>
+                    <td>{{ item['parking_slot_id'] }}</td>
+                    <td><input type="checkbox" class="row-checkbox" data-id="{{ item['_customer_name'] }}"></td> <!-- Checkbox with data attribute for ID -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button id="confirmButton" class="btn mybutton mt-3">Confirm User</button>
+        <h1 class="mt-5 text-center heading">Filled Data</h1>
+        <table class="table table-bordered table-hover mt-2">
+            <thead class="custom-header">
+                <tr>
+                    <th>UserName</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>City</th>
+                    <th>Car no.</th>
+                    <th>Token</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in collection2 %}
+                <tr>
+                    <td>{{ item['_customer_name'] }}</td>
+                    <td>{{ item['arrival_date'] }}</td>
+                    <td>{{ item['arrival_time'] }}</td>
+                    <td>{{ item['city'] }}</td>
+                    <td>{{ item['car_number_plate'] }}</td>
+                    <td>{{ item['parking_slot_id'] }}</td>
+                    <td><input type="checkbox" class="row-checkbox" data-id="{{ item['_customer_name'] }}"></td> <!-- Checkbox with data attribute for ID -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button id="removeButton" class="btn mybutton mt-3">Remove User</button>
+    </div>
+    <footer class="custom-footer py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>About Us</h5>
+                    <p>We provide the best parking management solutions for your convenience.</p>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <h5>Contact Us</h5>
+                    <p>Email: info@example.com</p>
+                    <p>Phone: +123 456 7890</p>
+                    <h5>Follow Us</h5>
+                    <a href="#" class="text-light me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-light me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+            <hr class="text-light">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 Your Company Name. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+</body>
+<script src="{{ url_for('static', filename='script/admindashboard.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const socket = io();
+    // Listen for updates from the server
+    socket.on('update_counts', function(data) {
+        document.getElementById('occupied').innerText = data.occupied;
+        document.getElementById('empty').innerText = data.empty;
+    });
+</script>
+
+</html>

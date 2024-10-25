@@ -1,0 +1,176 @@
+/* Overall body styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #fbdc8f, #f25a29); /* Gradient background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative; /* Allow absolute positioning of images */
+    overflow: hidden; /* Prevent overflow */
+}
+
+/* Image styling */
+.background-image {
+    position: relative; /* Position images relative to the body */
+    top: 150px; /* Adjust top position */
+    left: 480px; /* Adjust left position */
+    width: 500px; /* Set width */
+    z-index: 1; /* Ensure it is above the background */
+    opacity: 1; /* Slight transparency */
+}
+
+/* Signup container styling */
+.signup-container {
+    background-color: #ffffff; /* White background for the form */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for depth */
+    width: 320px; /* A bit wider for better spacing */
+    z-index: 2; /* Ensure form is above images */
+    position: fixed;
+}
+
+
+/* Signup container styling */
+.signup-container {
+    background-color: #ffffff; /* White background for the form */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for depth */
+    width: 400px; /* A bit wider for better spacing */
+    
+}
+
+/* Heading styling */
+.signup-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color:  #f25a29; /* Use the same color from the gradient for consistency */
+    font-size: 1.8em; /* Slightly larger font size */
+}
+
+/* Label styling */
+.signup-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333; /* Darker color for better contrast */
+}
+
+/* Input field styling */
+.signup-container input[type="text"],
+.signup-container input[type="email"],
+.signup-container input[type="password"] {
+    width: 93%;
+    padding: 12px; /* Increased padding for a better feel */
+    margin-bottom: 15px; /* More space between fields */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em; /* Slightly larger font */
+    transition: 0.3s; /* Smooth border transition */
+    border-color: #f25a29;
+}
+
+.signup-container input[type="text"]:focus,
+.signup-container input[type="email"]:focus,
+.signup-container input[type="password"]:focus {
+    border-color:  #f25a29; /* Highlight border on focus */
+}
+
+/* Optional: Add an underline effect */
+.signup-container h2::after {
+    content: ""; /* Empty content for the pseudo-element */
+    display: block; /* Make it a block element */
+    width: 50%; /* Width of the underline */
+    height: 4px; /* Height of the underline */
+    background-color: #f92500; /* Underline color */
+    margin: 10px auto 0; /* Center it below the heading */
+    border-radius: 5px; /* Rounded corners for the underline */
+}
+
+/* Submit button styling */
+.signup-container input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #f25a29; /* Same color as the heading */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em; /* Larger font size */
+    transition: 0.3s; /* Smooth transition for hover effect */
+}
+
+/* Change the color of the placeholder text */
+.signup-container input::placeholder {
+    color: #f25a29; 
+    opacity: 1;  
+}
+
+
+.signup-container input[type="submit"]:hover {
+    background-color:  #f25a29; /* Darker shade for hover */
+}
+
+/* Login link styling */
+.signup-container .login-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.signup-container .login-link a {
+    color:  #f25a29; /* Link color consistent with the theme */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Change the color of the labels */
+.signup-container label {
+    color: #f25a29; /* Set your desired color here */
+    font-weight: bold; /* Optional: makes the label text bold */
+}
+
+.signup-container .login-link a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+
+#backButton {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    background-color: #f8f7f7;
+    color: rgb(255, 0, 0);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#backButton:hover {
+    background-color: rgb(255, 255, 255);
+    color: #f25a29;
+}
+
+button {
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-top: 30px;
+}
+
+button:hover {
+    background-color: rgb(241, 3, 23);
+}
+
+
+

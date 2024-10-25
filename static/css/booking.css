@@ -1,0 +1,80 @@
+body {
+    background-color: #f0f2f5;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border: none;
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #f25a29;
+}
+
+.container h1::after {
+    content: ""; /* Empty content for the pseudo-element */
+    display: block; /* Make it a block element */
+    width: 50%; /* Width of the underline */
+    height: 4px; /* Height of the underline */
+    background-color: #f92500; /* Underline color */
+    margin: 10px auto 0; /* Center it below the heading */
+    border-radius: 5px; /* Rounded corners for the underline */
+}
+
+
+.form-group label {
+    font-weight: lighter;
+    color: #f25a29;
+}
+
+.btn-primary {
+    background-color: #f25a29;
+    border-color: #f25a29;
+}
+
+.btn-primary:hover {
+    background-color: #ff4000;
+    border-color: #ff4000;
+}
+
+.btn-outline-danger, .btn-outline-primary {
+    padding: 0.375rem 1.75rem;
+    font-size: 1rem;
+}
+
+.logout-btn {
+    background-color: #f25a29;
+    color : white;
+    border-radius: 20px;
+    width: 80px;
+    margin-right: 30px;
+    margin-top: 25px;
+}
+
+.back-btn {
+    background-color: #f25a29;
+    color: white;
+    border-radius: 20px;
+    width: 80px;
+    margin-left: 30px;
+    margin-top: 25px;
+}
+
+.container {
+    margin-top: 20px;
+    padding-bottom: 50px;
+}
+
+.flashed-messages {
+    list-style-type: none;
+    padding: 10px;
+    margin: 20px 0;
+    background-color: #f9dacf; /* Light green background */
+    border: 1px solid #f25a29; /* Dark green border */
+    color: #f92500; /* Dark green text */
+    border-radius: 4px;
+    position: relative;
+}
+

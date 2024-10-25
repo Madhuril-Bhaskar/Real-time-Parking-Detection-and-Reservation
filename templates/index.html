@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet"  href = "{{ url_for('static', filename = 'css/index.css')  }}">
+    <title>Login Page</title>
+   
+</head>
+<body>
+    <!-- Admin Login Button at the top-right -->
+    
+    <div class="admin-login">
+        <a href="{{ url_for('admin') }}" class="admin-btn">Admin Login</a>
+    </div>
+    <div class = "container">   
+        <div class = "left-half"></div> 
+        <div class="login-container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashed-messages">
+                        {% for message in messages %}
+                            <li class = "msg">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <h2>Welcome To Parking Zone</h2>
+            <form action="/" method = "POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br>
+                <h3>{{ message }}</h3>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Register here</a></p>
+        </div>
+    </div>
+</body>
+
+<script>
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get flashed messages
+        var messages = document.querySelector('.flashed-messages');
+        if (messages) {
+            // Set a timeout to remove the message after 3 seconds
+            setTimeout(function() {
+                messages.style.display = 'none';
+            }, 3000);
+        }
+    });
+</script>
+
+</html>

@@ -1,0 +1,133 @@
+/* Ensure the body and html elements take up the full viewport height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    
+}
+
+/* Main container to hold the left and right halves */
+.container {
+    display: flex; /* Use flexbox for layout */
+    height: 100%; /* Full height for the container */
+}
+
+/* Left half for the background image */
+.left-half {
+    flex: 1; /* Take up half of the screen */
+    background: url('/static/images/18310.jpg') no-repeat center; /* Background image */
+    background-size: 80%; /* Adjust size of the background image (50% of its original size) */
+    background-position: left center; /* Position the image to the left center */
+    height: 100%; /* Ensure it takes up the full height */
+    margin-left: 10%;
+}
+
+
+/* Right half for the form */
+.login-container {
+    flex: 1; /* Take up half of the screen */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+    padding: 30px;
+    border-radius: 10px;
+    margin-right: 10%;
+    margin-top: 10%;
+    margin-bottom: 10%; /* Center the form container vertically */
+    max-width: 400px; /* Set a fixed width for the form */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    position: relative; /* Keep the form above the background image */
+}
+
+/* Admin login button at top-right */
+.admin-login {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    z-index: 100; /* Make sure it stays above the background */
+}
+
+.admin-btn {
+    background-color: #f25a29;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.admin-btn:hover {
+    background-color: #FF4500;
+}
+
+.login-container h2 {
+    text-align: center; /* Center the heading */
+    color: #f25a29; /* Dark gray color for text */
+    font-size: 1.5em; /* Larger font size */
+    font-weight: bold; /* Bold text */
+    margin-bottom: 20px; /* Space below the heading */
+    text-transform: uppercase; /* Transform text to uppercase */
+    letter-spacing: 1px; /* Increase space between letters */
+    position: relative; /* Allow pseudo-elements positioning */
+}
+
+/* Optional: Add an underline effect */
+.login-container h2::after {
+    content: ""; /* Empty content for the pseudo-element */
+    display: block; /* Make it a block element */
+    width: 50%; /* Width of the underline */
+    height: 4px; /* Height of the underline */
+    background-color: #FF6347; /* Underline color */
+    margin: 10px auto 0; /* Center it below the heading */
+    border-radius: 5px; /* Rounded corners for the underline */
+}
+
+
+.login-container label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #555;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 93%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.login-container .btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #f25a29;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.login-container label {
+    color: #f25a29;
+    font-weight: lighter;
+}
+
+.login-container .btn:hover {
+    background-color: #e99a50;
+}
+
+.login-container p {
+    text-align: center;
+    color: #777;
+}
+
+.login-container a {
+    color: #FF6347;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}

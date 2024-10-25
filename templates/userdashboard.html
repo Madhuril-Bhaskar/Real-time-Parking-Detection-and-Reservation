@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/userdashboard.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+
+         <!-- Logout Button -->
+         <form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
+            <button id="logoutButton" type="submit">Logout</button>
+        </form>
+        
+        <h1>Hello Mr. {{ user.username }}! Welcome to Parking Zone</h1>
+        
+        <!-- Interactive Info Boxes -->
+        <div class="info-boxes">
+            <div class="box total-box">
+                <h2>Total Parking Spaces</h2>
+                <p id="totalSpaces">{{ total_spaces }}</p>
+            </div>
+            <div class="box available-box">
+                <h2>Available Parking Spaces</h2>
+                <p id="availableSpaces">{{ available_spaces }}</p>
+            </div>
+        </div>
+        
+        <!-- Booking Button -->
+        <div class = "booking">
+            <a href = "/bookslot" class = "booking-btn">Book spot</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script/userdashboard.js') }}"></script>
+</body>
+</html>

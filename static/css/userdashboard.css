@@ -1,0 +1,117 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #fbdc8f, #f25a29);;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.dashboard-container {
+    background-color: white;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 450px;
+}
+
+#logoutButton {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    background-color: #f8f7f7;
+    color: rgb(255, 0, 0);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#logoutButton:hover {
+    background-color: rgb(255, 255, 255);
+    color: #f25a29;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #f25a29;
+    font-weight: 300;
+    font-size: 28px;
+}
+
+.info-boxes {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 20px; /* Added space between boxes */
+}
+
+.box {
+    width: 45%;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.box:hover {
+    transform: scale(1.05);
+}
+
+.total-box {
+    background-color: #f25a29;
+}
+
+.available-box {
+    background-color: #f25a29;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+button {
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-top: 30px;
+}
+
+button:hover {
+    background-color: rgb(241, 3, 23);
+}
+
+.booking-btn {
+    background-color: #f25a29;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 20px;
+}
+
+.booking-btn:hover {
+    background-color: #FF4500;
+}
+
+.booking {
+    margin-top: 30px;
+}

@@ -1,0 +1,75 @@
+
+
+.logout-container {
+    display: flex; /* Use flexbox to align items */
+    justify-content: flex-end; /* Align the button to the right */
+    margin: 20px; /* Add margin around the container */
+}
+
+
+#logoutButton {
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    --bs-btn-font-size: 1rem;
+    --bs-btn-padding-y: .2rem;
+    --bs-btn-padding-x: 1.2rem;
+    background-color: #f25a29;
+    color: rgb(255, 255, 255);
+}
+
+#logoutButton:hover {
+    background-color: #dc3545; /* Darker red */
+    color: white; /* Text color on hover */
+}
+
+.circle {
+    width: 150px;  /* Circle diameter */
+    height: 150px; /* Circle diameter */
+    border-radius: 50%;
+    border: 5px solid #f25a29; /* Bootstrap primary color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px; /* Font size for the count */
+    position: relative;
+    margin: 20px auto; /* Center the circles */
+    background-color: white; /* Circle background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.text-below {
+    text-align: center;
+    font-size: 18px; /* Font size for the description */
+    margin-top: 10px; /* Space between circle and text */
+}
+
+.custom-header {
+    background-color: #f25a29;
+    color: rgb(255, 255, 255);
+
+}
+
+.heading {
+    color: #f25a29;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.card-spacing {
+    margin-left: 10px;
+}
+
+.btn.mybutton {
+    background-color: #f25a29;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+.btn.mybutton:hover {
+    background-color: #dc3545;
+    color: rgb(255, 255, 255);
+}
+
+.custom-footer {
+    background-color: #f1d6cd;
+    color: #ff0019;
+}
