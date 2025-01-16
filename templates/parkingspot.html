@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Layout</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Your previous styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #004080;
+            color: #fff;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        .container {
+            margin-top: 30px;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .parking-container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 48%;
+            padding: 20px;
+        }
+
+        .parking-container h2 {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .parking-spot {
+            position: relative;
+            width: 160px;
+            height: 90px;
+            background-color: #d9e8f5;
+            border: 3px solid #8aa6c1;
+            margin: 15px auto;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .parking-spot:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .parking-spot-id {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Status colors */
+        .empty {
+            background-color: #c8e6c9; /* Green */
+        }
+
+        .filled {
+            background-color: #fff9c4; /* Yellow */
+        }
+
+        .booked {
+            background-color: #ffcdd2; /* Red */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        Parking Management System
+    </div>
+
+    <!-- Parking Layout -->
+    <div class="container">
+        <!-- Open Roof Parking -->
+        <div class="parking-container">
+            <h2>Open Roof Parking</h2>
+            <div id="open-roof-parking" class="parking-spots"></div>
+        </div>
+
+        <!-- Inner Parking -->
+        <div class="parking-container">
+            <h2>Inner Parking</h2>
+            <div id="inner-parking" class="parking-spots"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Your JS Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const openRoofParking = document.getElementById('open-roof-parking');
+            const innerParking = document.getElementById('inner-parking');
+
+            fetch('/parking')
+                .then(response => response.json())
+                .then(parkingData => {
+                    parkingData.forEach(spot => {
+                        const spotDiv = document.createElement('div');
+                        spotDiv.className = `parking-spot ${spot.status}`;
+                        spotDiv.innerHTML = `<div class="parking-spot-id">${spot.id}</div>`;
+                        
+                        // Add click event to each parking spot
+                        spotDiv.addEventListener('click', () => {
+                            // Redirect to the booking page with spot ID and user name
+                            if ((spot.status !== "booked") && (spot.status !== "filled")) {  // Only allow booking if the spot is not already booked
+                                window.location.href = '/bookslot?spot_id=' + spot.id + '&spot_type=' + spot.type;
+
+                            }
+
+                        });
+
+                        // Append to appropriate container based on spot type
+                        if (spot.type === "open roof") {
+                            openRoofParking.appendChild(spotDiv);
+                        } else {
+                            innerParking.appendChild(spotDiv);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching parking data:', error));
+        });
+    </script>
+</body>
+</html>

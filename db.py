@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
 from users import User
+from flask import jsonify
 
 
 client = MongoClient("mongodb+srv://piyushseth1998:OA9hxez2jRcHos4I@parking.p4uxw.mongodb.net/")
@@ -30,25 +31,33 @@ def get_admin(username) :
     admin_data = admin_collection.find_one({'_id' : username})
     return admin_data
 
-def get_total_parking_spaces():
-    # Use the aggregate method to sum total parking spaces
-    result = parking_collection.aggregate([
-        {
-            "$group": {
-                "_id": None,  # We do not want to group by anything specific
-                "total_spaces": { "$sum": "$total_spaces" }
-            }
-        }
-    ])
-    
-    # Extract the sum from the result
-    total_spaces = 0
-    for doc in result:
-        total_spaces += doc["total_spaces"]
-        
-    return total_spaces
 
-def store_booking(customer_name, arrival_date, arrival_time, city, car_number_plate, parking_slot_id) :
+def get_parking():
+    parking_spots = parking_collection.find()
+    parking_data = []
+    for spot in parking_spots:
+        parking_data.append({
+            'id': spot['id'],
+            'status': spot['status'],
+            'type': spot['type']
+        })
+    
+    return jsonify(parking_data) 
+        
+        
+def get_total_parking_spaces():
+    total_spaces = parking_collection.count_documents({})
+    return total_spaces
+    
+def is_car_already_booked(car_number_plate):
+    """
+    Check if a car with the given number plate is already in the booking table.
+    """
+    existing_booking = booking_collection.find_one({'car_number_plate': car_number_plate})
+    return existing_booking is not None
+
+
+def store_booking(customer_name, arrival_time, parking_id, parking_type, city, car_number_plate) :
     total_spaces = get_total_parking_spaces()
     booking_available = booking_collection.count_documents({})
     filled_count = filled_collection.count_documents({})
@@ -56,13 +65,27 @@ def store_booking(customer_name, arrival_date, arrival_time, city, car_number_pl
         return False
     booking_details = {
     '_customer_name': customer_name,
-    'arrival_date': arrival_date,
     'arrival_time': arrival_time,
+    'parking_id': parking_id,
+    'parking_type': parking_type,
     'city': city,
     'car_number_plate': car_number_plate,
-    'parking_slot_id': parking_slot_id
     }
+    
     booking_collection.insert_one(booking_details)
+    
+    # Update the status of the parking_id in parking_collection
+    result = parking_collection.update_one(
+        {'id': parking_id},  # Match the parking_id
+        {'$set': {'status': 'booked'}}  # Update the status
+    )
+    
+    # Check if the update was successful
+    if result.modified_count == 0:
+        print(f"Failed to update parking_id {parking_id} in parking_collection.")
+    else:
+        print(f"Parking ID {parking_id} successfully marked as booked.")
+
     return True
     
     
@@ -73,6 +96,42 @@ def set_capacity(floor, numberofspot) :
     else :
         parking_collection.insert_one({'_id' : floor, 'total_spaces' : numberofspot})
         
+        
+
+def initialize_parking_data():
+    """
+    Initializes parking spot data with id, status, and type for the database.
+    Creates 5 open roof parking spots (OP-1 to OP-5) and 5 inner parking spots (IP-1 to IP-5).
+    """
+    # Sample data for parking spots (5 open roof and 5 inner parking spots)
+    parking_spots = [
+        {'id': 'OP-1', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'OP-2', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'OP-3', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'OP-4', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'OP-5', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'IP-1', 'status': 'empty', 'type': 'inner parking'},
+        {'id': 'IP-2', 'status': 'empty', 'type': 'inner parking'},
+        {'id': 'IP-3', 'status': 'empty', 'type': 'inner parking'},
+        {'id': 'IP-4', 'status': 'empty', 'type': 'inner parking'},
+        {'id': 'IP-5', 'status': 'empty', 'type': 'inner parking'}
+    ]
+    
+    # Insert each parking spot data into the collection
+    for spot in parking_spots:
+        # Check if the spot already exists (by id)
+        existing_spot = parking_collection.find_one({'id': spot['id']})
+        
+        if not existing_spot:
+            # Insert the parking spot data if it doesn't exist
+            parking_collection.insert_one(spot)
+            print(f"Initialized parking spot {spot['id']} with status '{spot['status']}' and type '{spot['type']}'.")
+        else:
+            # If the spot already exists, print a message
+            print(f"Parking spot {spot['id']} already exists. No changes made.")
+
+# Call the function to initialize the data
+# initialize_parking_data()
     
     
 def get_booking_collection() :

@@ -1,4 +1,5 @@
 import socket
+from debugpy.common.timestamp import current
 from flask import Flask, render_template, redirect, url_for, request, flash, Response
 import flask
 from flask_login import LoginManager, login_manager
@@ -7,9 +8,9 @@ from flask_login.utils import login_required, login_user, logout_user
 from matplotlib.style import available
 from sympy import total_degree
 from werkzeug.security import check_password_hash
-from db import get_booking_collection, get_filled_collection, save_user, get_user, get_admin, store_booking,get_total_parking_spaces, booking_to_filled, remove_from_filled, get_booked_filled_spaces
+from db import get_booking_collection, get_filled_collection, save_user, get_user, get_admin, store_booking,get_total_parking_spaces, booking_to_filled, remove_from_filled, get_booked_filled_spaces, get_parking,is_car_already_booked
 from pymongo.errors import DuplicateKeyError
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import string
 from ultralytics import YOLO
@@ -19,11 +20,14 @@ import serial
 from subprocess import Popen
 import argparse
 from flask import jsonify
+from flask_login import current_user
+
 
 
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -42,10 +46,10 @@ occupied_spots_arduino = 0
 
 def gen_frames_from_webcam():
     cap = cv2.VideoCapture(0) # Capture from video file (or use 0 for webcam)
-    address = "https://192.168.1.9:8080/video"
+    address = "E:/PKLot/PKLot/carPark.mp4"
     cap.open(address)
 
-    ser = serial.Serial('COM6', 9600)
+    #ser = serial.Serial('COM5', 9600)
     global occupied_spots_yolo
     global occupied_spots_arduino
     while True:
@@ -75,10 +79,10 @@ def gen_frames_from_webcam():
                         occupied_spots_yolo += 1
             
             # Read occupied spots from Arduino
-            if ser.in_waiting > 0:
-                sensor_data = ser.readline().decode('utf-8').strip()  # Read and decode data
-                print(f"Sensor Data: {sensor_data}")  # Debug: print the sensor data
-                occupied_spots_arduino = int(sensor_data)
+            #if ser.in_waiting > 0:
+            #    sensor_data = ser.readline().decode('utf-8').strip()  # Read and decode data
+            #    print(f"Sensor Data: {sensor_data}")  # Debug: print the sensor data
+            #    occupied_spots_arduino = int(sensor_data)
         
             empty_spots = total_spots - occupied_spots_arduino - occupied_spots_yolo
             socketio.emit('update_counts', {'occupied': occupied_spots_yolo + occupied_spots_arduino, 'empty': empty_spots})
@@ -231,47 +235,86 @@ def remove_checked_rows():
         return jsonify(success=False, message=str(e)), 500
 
 
+@app.route('/price_calculator', methods = ['GET'])
+@login_required
+def price_calculator():
+    return render_template('price_calculator.html')
+    
 
-    
-    
+@app.route('/parking', methods=['GET'])
+@login_required
+def get_parking_data():
+    # Fetch all parking spots data from the database
+    return get_parking()   
+   
+@app.route('/parkspot')
+@login_required 
+def parkspot():
+     
+    return render_template('parkingspot.html')
    
 @app.route('/bookslot')
-@login_required 
+@login_required
 def bookslot():
-    username = flask_login.current_user
-    return render_template('booking.html' , user = username)
-    
+    user = current_user
+    spot_id = request.args.get('spot_id')
+    spot_type = request.args.get('spot_type')
+    return render_template('booking.html', user = user, spot_id = spot_id, spot_type = spot_type)
+     
   
 @app.route('/bookslot', methods = ['POST'])
 @login_required
 def conf_booking() :
     if request.method == "POST" :
         customer_name = request.form.get('customer_name')
-        arrival_date = request.form.get('arrival_date')
         arrival_time = request.form.get('arrival_time')
+        parking_id = request.form.get('parking_id')
+        parking_type = request.form.get('parking_type')
         city = request.form.get('city')
         car_number_plate = request.form.get('car_number_plate')
         try:
-            # Combine the arrival date and time
-            arrival_datetime_str = f"{arrival_date} {arrival_time}"
-            arrival_datetime = datetime.strptime(arrival_datetime_str, '%Y-%m-%d %H:%M')
-
+            # Get the current time and add 1 hour to it
+            current_time = datetime.now()
+            min_arrival_time = current_time + timedelta(hours=1) 
+            
+            arrival_time_obj = datetime.strptime(arrival_time, '%H:%M') # type: ignore
             # Ensure the selected datetime is in the future
-            if arrival_datetime <= datetime.now():
-                flash('Please select a future date and time.')
-                return redirect(url_for('bookslot'))
-
+            if arrival_time_obj > min_arrival_time:
+                flash('Please select time only just 1 hour after.', 'danger')
+                return redirect(url_for('bookslot' , spot_id = parking_id, spot_type = parking_type))
         except ValueError:
-            flash('Invalid date or time format.')
-            return redirect(url_for('bookslot'))
+            flash('Invalid date or time format.', 'danger')
+            return redirect(url_for('bookslot', spot_id = parking_id, spot_type = parking_type))
         
-        parking_slot_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        if store_booking(customer_name, arrival_date, arrival_time, city, car_number_plate, parking_slot_id) :
-            flash('Booking confirmed successfully! Your Slot ID is: ' + parking_slot_id)
+        if is_car_already_booked(car_number_plate):
+            flash('Your car number plate is already booked.','danger')
+        elif store_booking(customer_name, arrival_time, parking_id, parking_type, city, car_number_plate) :
+            flash('Booking confirmed successfully! Your Slot ID is: ' + parking_id + 'success')
+            return redirect(url_for('confirmation', 
+                            customer_name=customer_name, 
+                            arrival_time=arrival_time, 
+                            parking_id=parking_id, 
+                            parking_type=parking_type, 
+                            city=city, 
+                            car_number_plate=car_number_plate))
         else :
-            flash('No empty spaces are available !')
+            flash('No empty spaces are available !', 'warning')
         
-    return redirect(url_for('bookslot'))
+    return redirect(url_for('bookslot', spot_id = parking_id, spot_type = parking_type))
+
+@app.route('/confirmation')
+@login_required
+def confirmation():
+    booking_details = {
+        'customer_name': request.args.get('customer_name'),
+        'arrival_time': request.args.get('arrival_time'),
+        'parking_id': request.args.get('parking_id'),
+        'parking_type': request.args.get('parking_type'),
+        'city': request.args.get('city'),
+        'car_number_plate': request.args.get('car_number_plate'),
+    }
+    return render_template('confirmation.html', booking_details=booking_details)
+    
 
 
 @socketio.on('connect')

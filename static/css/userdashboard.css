@@ -37,6 +37,25 @@ body {
     color: #f25a29;
 }
 
+#price_calculator {
+    position: absolute;
+    top: 10px;
+    right: 150px;
+    background-color: #f8f7f7;
+    color: rgb(255, 0, 0);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#price_calculator:hover {
+    background-color: rgb(255, 255, 255);
+    color: #f25a29;
+}
+
 h1 {
     margin-bottom: 20px;
     color: #f25a29;
