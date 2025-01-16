@@ -4,7 +4,7 @@ from users import User
 from flask import jsonify
 
 
-client = MongoClient("mongodb+srv://piyushseth1998:OA9hxez2jRcHos4I@parking.p4uxw.mongodb.net/")
+
 parkingdb = client.get_database("parkingdb")
 users_collection = parkingdb.get_collection("users")
 admin_collection = parkingdb.get_collection("admin")
