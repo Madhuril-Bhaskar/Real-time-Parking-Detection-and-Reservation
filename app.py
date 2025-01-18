@@ -6,9 +6,10 @@ from flask_login import LoginManager, login_manager
 import flask_login
 from flask_login.utils import login_required, login_user, logout_user
 from matplotlib.style import available
+from requests import session
 from sympy import total_degree
 from werkzeug.security import check_password_hash
-from db import get_booking_collection, get_filled_collection, save_user, get_user, get_admin, store_booking,get_total_parking_spaces, booking_to_filled, remove_from_filled, get_booked_filled_spaces, get_parking,is_car_already_booked
+from db import get_booking_collection, get_filled_collection, save_user, get_user, get_admin,store_booking,get_total_parking_spaces, booking_to_filled, remove_from_filled, get_booked_filled_spaces, get_parking,is_car_already_booked,isAvailable, alreadyexist
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timedelta
 import random
@@ -21,6 +22,7 @@ from subprocess import Popen
 import argparse
 from flask import jsonify
 from flask_login import current_user
+from flask import session
 
 
 
@@ -152,10 +154,13 @@ def registration() :
     message = ''
     if request.method == "POST" :
         username = request.form.get('username')
-        password_input = request.form.get('password')
         email = request.form.get('email')
+        mobile = request.form.get('mobile')
+        city = request.form.get('city')
+        noplate = request.form.get('noplate')
+        password_input = request.form.get('password')
         try :
-            save_user(username, email, password_input)
+            save_user(username, email,mobile,city,noplate, password_input)
             flash("Successfully Account Created !")
             return redirect(url_for('login'))       
         except DuplicateKeyError:
@@ -268,6 +273,7 @@ def conf_booking() :
     if request.method == "POST" :
         customer_name = request.form.get('customer_name')
         arrival_time = request.form.get('arrival_time')
+        session_time = request.form.get('session_time')
         parking_id = request.form.get('parking_id')
         parking_type = request.form.get('parking_type')
         city = request.form.get('city')
@@ -275,9 +281,21 @@ def conf_booking() :
         try:
             # Get the current time and add 1 hour to it
             current_time = datetime.now()
+            print(current_time)
             min_arrival_time = current_time + timedelta(hours=1) 
-            
-            arrival_time_obj = datetime.strptime(arrival_time, '%H:%M') # type: ignore
+            print(min_arrival_time)
+            arrival_time_obj = datetime.strptime(arrival_time, '%H:%M')
+            arrival_time_obj = current_time.replace(
+                hour=arrival_time_obj.hour, 
+                minute=arrival_time_obj.minute, 
+                second=arrival_time_obj.second, 
+                microsecond=0
+            )
+             # If arrival time is earlier than current time, assume it's the next day
+            if arrival_time_obj < current_time:
+                arrival_time_obj += timedelta(days=1)
+
+            print(arrival_time_obj)
             # Ensure the selected datetime is in the future
             if arrival_time_obj > min_arrival_time:
                 flash('Please select time only just 1 hour after.', 'danger')
@@ -288,11 +306,11 @@ def conf_booking() :
         
         if is_car_already_booked(car_number_plate):
             flash('Your car number plate is already booked.','danger')
-        elif store_booking(customer_name, arrival_time, parking_id, parking_type, city, car_number_plate) :
-            flash('Booking confirmed successfully! Your Slot ID is: ' + parking_id + 'success')
+        elif isAvailable() :
             return redirect(url_for('confirmation', 
                             customer_name=customer_name, 
                             arrival_time=arrival_time, 
+                            session_time = session_time,
                             parking_id=parking_id, 
                             parking_type=parking_type, 
                             city=city, 
@@ -308,15 +326,65 @@ def confirmation():
     booking_details = {
         'customer_name': request.args.get('customer_name'),
         'arrival_time': request.args.get('arrival_time'),
+        'session_time': request.args.get('session_time'),
         'parking_id': request.args.get('parking_id'),
         'parking_type': request.args.get('parking_type'),
         'city': request.args.get('city'),
         'car_number_plate': request.args.get('car_number_plate'),
     }
+    today = datetime.now().date()
+    arrival = datetime.strptime(f"{today} {booking_details['arrival_time']}", '%Y-%m-%d %H:%M')
+    departure = datetime.strptime(f"{today} {booking_details['session_time']}", '%Y-%m-%d %H:%M')
+
+    # Handle cases where the session time is past midnight
+    if departure < arrival:
+        departure += timedelta(days=1)
+        
+    # Calculate total period in hours
+    total_duration = (departure - arrival).total_seconds() / 3600  # Duration in hours
+
+    # Determine pricing based on parking type
+    price_per_hour = {
+        'open roof': 2,  # Example: $2/hour
+        'inner parking': 3,  # Example: $3/hour
+    }
+    
+    p_type = str(booking_details['parking_type'])
+    total_price = round(total_duration * price_per_hour.get(p_type, 2), 2)
+
+    # Add calculated fields to booking details
+    booking_details['total_duration'] = f"{round(total_duration, 2)}"  # In hours
+    booking_details['total_price'] = f"{total_price}"
+
+    session['booking_details'] = booking_details
     return render_template('confirmation.html', booking_details=booking_details)
     
+@app.route('/payment', methods = ['GET', 'POST'])
+@login_required
+def payment():
+    booking_details = session.get('booking_details')
+    user = current_user  
+    if request.method == 'POST' :
+        if alreadyexist(booking_details) :
+            store_booking(booking_details)
+            return render_template('process_payment.html')
+        else:
+            print("Your parking spot is already booked !")
+            return render_template('payment.html', user = user, booking_details = booking_details)
+    
+    return render_template('payment.html', user = user, booking_details = booking_details)
 
 
+@app.route('/process_payment')
+@login_required
+def process_payment() :
+    booking_details = session.get('booking_details')
+    user = current_user
+    session.pop
+    return render_template('process_payment.html', user = user, booking_details = booking_details)
+    
+    
+    
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
