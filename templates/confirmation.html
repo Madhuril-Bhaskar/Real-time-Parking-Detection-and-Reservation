@@ -37,6 +37,17 @@
             background-color: #45a049;
             color: white;
         }
+        .btn-payment {
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+        .btn-payment:hover {
+            background-color: #0056b3;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -58,12 +69,24 @@
                             <td>{{ booking_details.arrival_time }}</td>
                         </tr>
                         <tr>
+                            <th scope="row">Departure Time</th>
+                            <td>{{ booking_details.session_time }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Duration</th>
+                            <td>{{ booking_details.total_duration }}</td>
+                        </tr>
+                        <tr>
                             <th scope="row">Parking ID</th>
                             <td>{{ booking_details.parking_id }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Parking Type</th>
                             <td>{{ booking_details.parking_type }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Payable Amount</th>
+                            <td>{{ booking_details.total_price }}</td>
                         </tr>
                         <tr>
                             <th scope="row">City</th>
@@ -77,6 +100,7 @@
                 </table>
                 <div class="text-center mt-4">
                     <a href="{{ url_for('userdashboard') }}" class="btn btn-custom">Back to Profile</a>
+                    <a href="{{ url_for('payment') }}" class="btn btn-payment">Pay and Confirm</a>
                 </div>
             </div>
         </div>

@@ -62,11 +62,11 @@
             <thead class="custom-header">
                 <tr>
                     <th>UserName</th>
-                    <th>Date</th>
                     <th>Time</th>
+                    <th>Parking_ID</th>
+                    <th>Parking_Type</th>
                     <th>City</th>
                     <th>Car no.</th>
-                    <th>Token</th>
                     <th></th>
                 </tr>
             </thead>
@@ -74,11 +74,11 @@
                 {% for item in collection1 %}
                 <tr>
                     <td>{{ item['_customer_name'] }}</td>
-                    <td>{{ item['arrival_date'] }}</td>
                     <td>{{ item['arrival_time'] }}</td>
+                    <td>{{ item['parking_id'] }}</td>
+                    <td>{{ item['parking_type'] }}</td>
                     <td>{{ item['city'] }}</td>
                     <td>{{ item['car_number_plate'] }}</td>
-                    <td>{{ item['parking_slot_id'] }}</td>
                     <td><input type="checkbox" class="row-checkbox" data-id="{{ item['_customer_name'] }}"></td> <!-- Checkbox with data attribute for ID -->
                 </tr>
                 {% endfor %}
@@ -90,11 +90,11 @@
             <thead class="custom-header">
                 <tr>
                     <th>UserName</th>
-                    <th>Date</th>
                     <th>Time</th>
+                    <th>Parking_ID</th>
+                    <th>Parking_Type</th>
                     <th>City</th>
                     <th>Car no.</th>
-                    <th>Token</th>
                     <th></th>
                 </tr>
             </thead>
@@ -102,11 +102,11 @@
                 {% for item in collection2 %}
                 <tr>
                     <td>{{ item['_customer_name'] }}</td>
-                    <td>{{ item['arrival_date'] }}</td>
                     <td>{{ item['arrival_time'] }}</td>
+                    <td>{{ item['parking_id'] }}</td>
+                    <td>{{ item['parking_type'] }}</td>
                     <td>{{ item['city'] }}</td>
                     <td>{{ item['car_number_plate'] }}</td>
-                    <td>{{ item['parking_slot_id'] }}</td>
                     <td><input type="checkbox" class="row-checkbox" data-id="{{ item['_customer_name'] }}"></td> <!-- Checkbox with data attribute for ID -->
                 </tr>
                 {% endfor %}

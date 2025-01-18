@@ -5,21 +5,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 150vh;
     margin: 0;
+    padding: 0;
     position: relative; /* Allow absolute positioning of images */
-    overflow: hidden; /* Prevent overflow */
+    overflow: auto; /* Prevent overflow */
 }
 
-/* Image styling */
-.background-image {
-    position: relative; /* Position images relative to the body */
-    top: 150px; /* Adjust top position */
-    left: 480px; /* Adjust left position */
-    width: 500px; /* Set width */
-    z-index: 1; /* Ensure it is above the background */
-    opacity: 1; /* Slight transparency */
-}
+
 
 /* Signup container styling */
 .signup-container {
@@ -27,21 +20,11 @@ body {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for depth */
-    width: 320px; /* A bit wider for better spacing */
+    width: 420px; /* A bit wider for better spacing */
     z-index: 2; /* Ensure form is above images */
-    position: fixed;
+    position: relative;
 }
 
-
-/* Signup container styling */
-.signup-container {
-    background-color: #ffffff; /* White background for the form */
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for depth */
-    width: 400px; /* A bit wider for better spacing */
-    
-}
 
 /* Heading styling */
 .signup-container h2 {
@@ -62,6 +45,7 @@ body {
 /* Input field styling */
 .signup-container input[type="text"],
 .signup-container input[type="email"],
+.signup-container input[type="tel"],
 .signup-container input[type="password"] {
     width: 93%;
     padding: 12px; /* Increased padding for a better feel */
@@ -75,6 +59,7 @@ body {
 
 .signup-container input[type="text"]:focus,
 .signup-container input[type="email"]:focus,
+.signup-container input[type="tel"]:focus,
 .signup-container input[type="password"]:focus {
     border-color:  #f25a29; /* Highlight border on focus */
 }
