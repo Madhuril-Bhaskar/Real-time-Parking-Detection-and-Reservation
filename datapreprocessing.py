@@ -23,6 +23,9 @@ import random
 from PIL import Image
 from sklearn.semi_supervised import LabelSpreading
 import matplotlib.pyplot as plt
+import cv2
+import numpy as np
+import glob
 
 
 ################################################################################
@@ -331,3 +334,386 @@ plt.tight_layout()
 plt.show()
 
 
+################################################################################
+#   Function to resize the image and adding padding if neccessary
+################################################################################
+
+
+def resize_with_padding(image, target_size=(1280, 720)):
+    """
+    Resizes the image to the target size while maintaining the aspect ratio
+    by adding padding if necessary.
+    
+    Args:
+    - image: The input image to be resized.
+    - target_size: A tuple (width, height) representing the target size.
+    
+    Returns:
+    - resized_image: The resized image with padding.
+    """
+    # Get original image dimensions
+    h, w = image.shape[:2]
+    target_w, target_h = target_size
+    
+    # Calculate the scale for resizing
+    scale_w = target_w / w
+    scale_h = target_h / h
+    scale = min(scale_w, scale_h)  # Scale the image while maintaining aspect ratio
+
+    # Compute the new width and height after scaling
+    new_w = int(w * scale)
+    new_h = int(h * scale)
+
+    # Resize the image
+    resized_image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+    # Create a blank canvas with the target size
+    canvas = np.full((target_h, target_w, 3), 128, dtype=np.uint8)  # Fill with gray padding (optional)
+
+    # Compute top-left corner to place the resized image in the center
+    start_x = (target_w - new_w) // 2
+    start_y = (target_h - new_h) // 2
+
+    # Place the resized image onto the canvas
+    canvas[start_y:start_y+new_h, start_x:start_x+new_w] = resized_image
+
+    return canvas
+
+
+
+################################################################################
+#   Making a diverse dataset
+################################################################################
+
+# Pick labels from folder and move to folder
+
+source_path = "E:/PKLot/PKLot/total_contains"
+destination_folder = "E:/PKLot/PKLot/new/images"
+
+if not os.path.exists(destination_folder) :
+    os.makedirs(destination_folder)
+
+txt_files  = [f for f in os.listdir(source_path) if f.endswith('.txt')]
+
+
+for txt_file in txt_files :
+    image_file = os.path.splitext(txt_file)[0] +  ".jpg"
+    image_source_path = os.path.join(source_path, image_file)
+    destination_path = os.path.join(destination_folder, image_file)
+    shutil.move(image_source_path, destination_path)
+    
+
+
+source_folder   = "E:/PKLot/PKLot/total_contains"
+train_folder    = "E:/PKLot/PKLot/data/train"
+val_folder      = "E:/PKLot/PKLot/data/val"
+
+train_ratio = 0.85
+val_ratio   = 0.15
+
+for folder in [train_folder, val_folder] :
+    if not os.path.exists(folder) :
+        os.makedirs(folder)
+        
+all_files = os.listdir(source_folder)
+image_files = [f for f in all_files if f.endswith(".jpg")]
+
+
+# Calculate the number of samples for each split
+num_samples = len(image_files)
+num_train = int(train_ratio * num_samples)
+num_val = num_samples  - num_train
+
+random.shuffle(image_files)
+
+# Picking up the indexes
+train_files  = image_files[ : num_train]
+val_files    = image_files[num_train:]
+
+# Move corresponding txt files along with images
+
+# for val folder : 
+for file in val_files :
+    # Move images
+    source_image_path       = os.path.join(source_folder, file)
+    destination_image_path  = os.path.join(val_folder, file)
+    shutil.move(source_image_path, destination_image_path)
+    
+    # Move txt files
+    txt_filename         = os.path.splitext(file)[0] + ".txt"
+    source_txt_path      = os.path.join(source_folder, txt_filename)
+    destination_txt_path = os.path.join(val_folder, txt_filename)
+    shutil.move(source_txt_path, destination_txt_path)       
+        
+# for train folder : 
+for file in train_files :
+    # Move images
+    source_image_path       = os.path.join(source_folder, file)
+    destination_image_path  = os.path.join(train_folder, file)
+    shutil.move(source_image_path, destination_image_path)
+    
+    # Move txt files
+    txt_filename         = os.path.splitext(file)[0] + ".txt"
+    source_txt_path      = os.path.join(source_folder, txt_filename)
+    destination_txt_path = os.path.join(train_folder, txt_filename)
+    shutil.move(source_txt_path, destination_txt_path)  
+     
+    
+datasets      = ['train', 'val']
+source_folder = "E:/PKLot/PKLot/data"
+
+for dataset in datasets:
+    dataset_folder = os.path.join(source_folder, dataset)
+    
+    # creating images and labels folders
+    images_folder = os.path.join(dataset_folder, "images")
+    labels_folder = os.path.join(dataset_folder, "labels")
+    
+    os.makedirs(images_folder, exist_ok=True)
+    os.makedirs(labels_folder, exist_ok=True)
+    
+    # Organize image and labels files
+    for file in os.listdir(dataset_folder) :
+        if(file.endswith(".jpg")) :
+            image_path        = os.path.join(dataset_folder, file)
+            image_destination = os.path.join(images_folder, file)
+            shutil.move(image_path, image_destination)
+        elif file.endswith(".txt") :
+            label_path        = os.path.join(dataset_folder, file)
+            label_destination = os.path.join(labels_folder, file)
+            shutil.move(label_path, label_destination)
+
+
+
+################################################################################
+#   pocessing on labels
+################################################################################
+
+def swap_first_digit(input_file, output_file):
+    # Open the input file in read mode and the output file in write mode
+    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+        # Read each line from the input file
+        for line in infile:
+            # Split the line into parts, assuming it's space-separated
+            parts = line.strip().split()
+            
+            # Check if the first part is '0' or '1'
+            if parts and (parts[0] == '0' or parts[0] == '1'):
+                # Swap '0' to '1' and '1' to '0'
+                swapped_digit = '1' if parts[0] == '0' else '0'
+                # Replace the first digit and join the line back together
+                new_line = ' '.join([swapped_digit] + parts[1:])
+                # Write the new line to the output file
+                outfile.write(new_line + '\n')
+            else:
+                # If the line doesn't start with '0' or '1', write it unchanged
+                outfile.write(line + '\n')
+
+
+# Example usage
+source_folder = 'E:/PKLot/PKLot/olddata2/valid/labels'  # Path to your input text file
+output_folder = 'E:/PKLot/PKLot/olddata2/valid/newlabels' # Path to your output text file
+
+os.makedirs(output_folder, exist_ok=True)
+
+txt_files = [f for f in os.listdir(source_folder) if f.endswith('.txt')]
+
+for file in txt_files : 
+    input_file = os.path.join(source_folder, file)
+    output_file = os.path.join(output_folder, file) 
+    swap_first_digit(input_file, output_file)
+
+
+
+################################################################################
+#   prepare a new dataset - segmented dataset ( for approach-2 )
+################################################################################
+
+
+# Define paths
+pklot_base = r"E:\PKLot\PKLot\PKLotSegmented"  # Root path of your dataset
+output_images_dir = r"E:\PKLot\output\images"  # Output directory for images
+output_labels_dir = r"E:\PKLot\output\labels"  # Output directory for labels
+
+# Class mapping
+class_mapping = {"Empty": 0, "Occupied": 1}
+
+# Ensure output directories exist
+os.makedirs(output_images_dir, exist_ok=True)
+os.makedirs(output_labels_dir, exist_ok=True)
+
+def prepare_dataset():
+    # Walk through all subdirectories under the base path
+    for root, dirs, files in os.walk(pklot_base):
+        for category in class_mapping.keys():  # Look for "Empty" and "Occupied" folders
+            if category in root:  # Check if the current path contains "Empty" or "Occupied"
+                class_id = class_mapping[category]
+                images = glob.glob(f"{root}/*.jpg")  # Find all .jpg files in this folder
+                
+                for image_path in images:
+                    # Copy image to output directory
+                    image_name = os.path.basename(image_path)
+                    shutil.copy(image_path, os.path.join(output_images_dir, image_name))
+                    
+                    # Create label file with dummy bounding box
+                    label_file_path = os.path.join(output_labels_dir, image_name.replace(".jpg", ".txt"))
+                    with open(label_file_path, "w") as label_file:
+                        # Dummy bounding box: covers the entire image
+                        label_file.write(f"{class_id} 0.5 0.5 1.0 1.0\n")
+
+prepare_dataset()
+print("Dataset preparation complete!")
+
+
+    
+################################################################################
+#    Train_test_val folders split
+################################################################################
+
+source_folder_image   = "E:/PKLot/PKLot/output/images"
+source_folder_text    = "E:/PKLot/PKLot/output/labels"
+train_folder    = "E:/PKLot/PKLot/output/train"
+test_folder     = "E:/PKLot/PKLot/output/test"
+val_folder      = "E:/PKLot/PKLot/output/val"
+
+train_ratio = 0.7
+test_ratio  = 0.15
+val_ratio   = 0.15
+
+for folder in [train_folder, test_folder, val_folder] :
+    if not os.path.exists(folder) :
+        os.makedirs(folder)
+        
+all_files = os.listdir(source_folder_image)
+image_files = [f for f in all_files if f.endswith(".jpg")]
+
+
+# Calculate the number of samples for each split
+num_samples = len(image_files)
+num_train = int(train_ratio * num_samples)
+num_test = int(test_ratio * num_samples)
+num_val = num_samples - num_test - num_train
+
+random.shuffle(image_files)
+
+# Picking up the indexes
+train_files  = image_files[ : num_train]
+test_files   = image_files[num_train : num_train + num_test]
+val_files    = image_files[num_train+num_test:]
+
+# Move corresponding txt files along with images
+
+# for test folder :
+for file in test_files :
+    # Move images
+    source_image_path       = os.path.join(source_folder_image, file)
+    destination_image_path  = os.path.join(test_folder, file)
+    shutil.move(source_image_path, destination_image_path)
+    
+    # Move txt files
+    txt_filename         = os.path.splitext(file)[0] + ".txt"
+    source_txt_path      = os.path.join(source_folder_text, txt_filename)
+    destination_txt_path = os.path.join(test_folder, txt_filename)
+    shutil.move(source_txt_path, destination_txt_path)
+
+# for val folder : 
+for file in val_files :
+    # Move images
+    source_image_path       = os.path.join(source_folder_image, file)
+    destination_image_path  = os.path.join(val_folder, file)
+    shutil.move(source_image_path, destination_image_path)
+    
+    # Move txt files
+    txt_filename         = os.path.splitext(file)[0] + ".txt"
+    source_txt_path      = os.path.join(source_folder_text, txt_filename)
+    destination_txt_path = os.path.join(val_folder, txt_filename)
+    shutil.move(source_txt_path, destination_txt_path)       
+        
+# for train folder : 
+for file in train_files :
+    # Move images
+    source_image_path       = os.path.join(source_folder_image, file)
+    destination_image_path  = os.path.join(train_folder, file)
+    shutil.move(source_image_path, destination_image_path)
+    
+    # Move txt files
+    txt_filename         = os.path.splitext(file)[0] + ".txt"
+    source_txt_path      = os.path.join(source_folder_text, txt_filename)
+    destination_txt_path = os.path.join(train_folder, txt_filename)
+    shutil.move(source_txt_path, destination_txt_path)  
+    
+    
+################################################################################
+#    Apply some image preprocessing to enhance model performance
+################################################################################
+
+
+
+# Paths
+base_dir = "E:/PKLot/PKLot/data"  # Root directory containing 'train', 'val', 'test'
+output_dir = "E:/PKLot/PKLot/output"  # Directory to save processed images
+
+# Define subdirectories for train, val, and test
+sub_dirs = ['train', 'val', 'test']
+
+# Ensure output directories exist
+os.makedirs(os.path.join(output_dir, 'train', 'images'), exist_ok=True)
+os.makedirs(os.path.join(output_dir, 'train', 'labels'), exist_ok=True)
+os.makedirs(os.path.join(output_dir, 'val', 'images'), exist_ok=True)
+os.makedirs(os.path.join(output_dir, 'val', 'labels'), exist_ok=True)
+os.makedirs(os.path.join(output_dir, 'test', 'images'), exist_ok=True)
+os.makedirs(os.path.join(output_dir, 'test', 'labels'), exist_ok=True)
+
+def preprocess_image(image_path):
+    """
+    Apply preprocessing to a single image.
+    - Resize the image to 640x640.
+    - Normalize pixel values to [0, 1].
+    - Apply Gaussian Blur to reduce noise.
+    - Histogram Equalization for contrast improvement.
+    """
+    img = cv2.imread(image_path)
+
+    # Resize to YOLOv8 default input size
+    img = cv2.resize(img, (640, 640))
+
+    # Normalize pixel values to [0, 1] range
+    img = cv2.normalize(img, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
+
+    # Apply Gaussian Blur (Optional)
+    img = cv2.GaussianBlur(img, (3, 3), 0)
+
+    # Histogram equalization on the luminance channel (optional)
+    yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+    yuv[:, :, 0] = cv2.equalizeHist(yuv[:, :, 0])  # Apply to Y channel (luminance)
+    img = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR)
+
+    return img
+
+def preprocess_dataset():
+    for sub_dir in sub_dirs:
+        images_dir = os.path.join(base_dir, sub_dir, 'images')
+        labels_dir = os.path.join(base_dir, sub_dir, 'labels')
+        
+        output_images_dir = os.path.join(output_dir, sub_dir, 'images')
+        output_labels_dir = os.path.join(output_dir, sub_dir, 'labels')
+
+        # Get all image paths
+        image_paths = glob.glob(f"{images_dir}/*.jpg")  # Assuming images are .jpg files
+
+        for image_path in image_paths:
+            # Process image
+            processed_img = preprocess_image(image_path)
+
+            # Get the base name for the image
+            image_name = os.path.basename(image_path)
+
+            # Save the processed image
+            cv2.imwrite(os.path.join(output_images_dir, image_name), processed_img)
+
+            # Copy the corresponding label file to the output labels directory
+            label_file_path = os.path.join(labels_dir, image_name.replace(".jpg", ".txt"))
+            shutil.copy(label_file_path, os.path.join(output_labels_dir, image_name.replace(".jpg", ".txt")))
+
+preprocess_dataset()
+print("Image preprocessing complete!")

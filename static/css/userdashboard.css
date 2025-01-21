@@ -1,12 +1,88 @@
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #fbdc8f, #f25a29);;
+    background: #fff5f2;
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     height: 100vh;
+    flex-direction: column;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f25a29;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    height: 100px;
+}
+
+.logo-container {
+    display: flex;
+    margin-left: 35px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.brand-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-top: 13px;
+}
+
+form {
+    margin: 0;
+}
+
+#price_calculator, #logoutButton {
+    
+    transition: background-color 0.3s;
+    font-size: 17px;
+    padding: 0.3em 1.5em;
+    border: transparent;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    background: #ffffff;
+    color: #f25a29;
+    border-radius: 4px;
+    margin-right: 20px;
+    height: 40px;
+}
+
+#price_calculator:hover, #logoutButton:hover {
+    background: rgb(2,0,36);
+    background: linear-gradient(60deg, rgb(255, 98, 30) 0%, rgb(234, 160, 128) 100%);
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#price_calculator:active, #logoutButton:active{
+    transform: translate(0em, 0.2em);
+}
+
+.navbar form:last-child {
+    margin-right: 50px;
+}
+
+
+
+.buttons-container {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
 }
 
 .dashboard-container {
@@ -16,44 +92,12 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 450px;
-}
-
-#logoutButton {
-    position: absolute;
-    top: 10px;
-    right: 50px;
-    background-color: #f8f7f7;
-    color: rgb(255, 0, 0);
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-#logoutButton:hover {
-    background-color: rgb(255, 255, 255);
-    color: #f25a29;
-}
-
-#price_calculator {
-    position: absolute;
-    top: 10px;
-    right: 150px;
-    background-color: #f8f7f7;
-    color: rgb(255, 0, 0);
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-#price_calculator:hover {
-    background-color: rgb(255, 255, 255);
-    color: #f25a29;
+    margin-top: 150px;
+    flex-grow: 1;
+    display: flex;
+    margin-bottom: 300px;
+    flex-direction: column;
+    justify-content: center;
 }
 
 h1 {
@@ -107,7 +151,7 @@ button {
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 20px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s;
@@ -124,7 +168,7 @@ button:hover {
     padding: 10px 20px;
     text-decoration: none;
     font-weight: bold;
-    border-radius: 20px;
+    border-radius: 4px;
 }
 
 .booking-btn:hover {
@@ -134,3 +178,63 @@ button:hover {
 .booking {
     margin-top: 30px;
 }
+
+
+/* Footer Section Customization */
+
+footer {
+    margin-top: auto; /* Pushes footer to the bottom */
+    width: 100%; /* Ensure footer stretches across the entire page */
+}
+
+.footer .text-white{
+    color: #ffffff;
+    font-weight: lighter;
+}
+
+.bg-red {
+    background-color: #f25a29;
+}
+
+.footer .text-white:hover {
+    color: #ffffff; /* Change color on hover */
+}
+
+.footer .fab {
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+    color: #ffffff;
+}
+
+.footer .fab:hover {
+    color: #2e2d2d; /* Social media icon hover color */
+}
+
+.footer .f-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer .f-container a {
+    text-decoration: none;
+}
+
+.footer .my-3 a {
+    margin: 0 10px;
+}
+
+.footer .my-3 a:hover {
+    color: #f5576c;
+}
+
+.footer p {
+    font-size: 0.9rem;
+}
+
+/* Add some space between the social media icons and the footer content */
+.footer .my-3 {
+    margin-top: 1rem;
+}
+
+

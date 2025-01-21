@@ -10,11 +10,23 @@
 
 </head>
 <body>
-    <!-- Back Button -->
-    <button class="back-btn" onclick="window.history.back()">
-        Back
-    </button>
-
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/parked-car.png')}}" alt="ParkEase Logo" class="logo">
+            <span class="brand-name">ParkEase</span>
+        </div>
+        <div class= "buttons-container">
+            <!-- Back Button -->
+            <form action="{{ url_for('back') }}" method="POST">
+                <button id="backButton" type="submit">Back</button>
+            </form>
+            <!-- Logout Button -->
+            <form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
+                <button id="logoutButton" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
     <div class="container">
         <div class="card">
             <div class="card-header">Parking Price Calculator</div>
