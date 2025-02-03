@@ -1,7 +1,7 @@
 ################################################################################
 #               Real-Time parking detecttion and reservation                   #                  
 #                                                                              #
-#                         Training  Model                                      #
+#                          Training  Model                                     #
 #                                                                              #
 ################################################################################
 
@@ -34,20 +34,6 @@ model.train(data = 'E:/PKLot/PKLot/config.yaml',
             freeze = 2,
             pretrained = True)
 
-################################################################################
-#    Retrain best_model.pt  on a diverse dataset      
-################################################################################
-
-# Define path to the best model
-
-best_model_path = "E:/PKLot/PKLot/runs/detect/train/weights/best.pt"
-
-# Load model
-best_model = YOLO(best_model_path)
-
-
-# Retrain best model 
-best_model.train(data = "E:/PKLot/PKLot/new_config.yaml", epochs = 20, lr0 = 0.001 , patience = 5, workers = 8, pretrained = True)
 
 ################################################################################
 #    Retrain best_model.pt  on a diverse dataset      

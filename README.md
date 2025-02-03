@@ -145,3 +145,7 @@ This project is licensed under the MIT License.
 Piyush Kumar Seth\
 [GitHub Profile](https://github.com/Piyushseth55)
 
+### Team Members
+- Piyush Kumar Seth
+- [Akshit Gaur](#)
+- [Madhuril Bhaskar](#)

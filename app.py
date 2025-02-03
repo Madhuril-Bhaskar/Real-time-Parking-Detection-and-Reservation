@@ -1,3 +1,18 @@
+################################################################################
+#               Real-Time parking detecttion and reservation                   #                  
+#                                                                              #
+#                         Data Preprocessing                                   #
+#                                                                              #
+################################################################################
+
+
+
+
+
+################################################################################
+#    Loading Libraries        
+################################################################################
+
 import socket
 from debugpy.common.timestamp import current
 from flask import Flask, render_template, redirect, url_for, request, flash, Response
@@ -46,6 +61,11 @@ total_spots = get_total_parking_spaces()
 occupied_spots_arduino = 0
 
 
+
+################################################################################
+# Generating a video frame which montior parking spots at real-time
+################################################################################
+
 def gen_frames_from_webcam():
     cap = cv2.VideoCapture(0) # Capture from video file (or use 0 for webcam)
     address = "https://192.168.114.82:8080/video"
@@ -55,7 +75,6 @@ def gen_frames_from_webcam():
         print("Error: Could not open video stream.")
         return
 
-   
     ser = serial.Serial('COM5', 9600)
     global occupied_spots_yolo
     global occupied_spots_arduino
@@ -118,6 +137,9 @@ def gen_frames_from_webcam():
     cv2.destroyAllWindows()  # Close all OpenCV windows
 
 
+################################################################################
+# ---- Login page ---- 
+################################################################################
 
 @app.route('/', methods = ['GET', 'POST'])
 def login() :
@@ -135,6 +157,10 @@ def login() :
     return render_template('index.html', message = message)
 
 
+################################################################################
+# ---- Userdashboard ---- 
+################################################################################
+
 @app.route('/userdashboard')
 @login_required
 def userdashboard():
@@ -142,7 +168,11 @@ def userdashboard():
     empty_spaces = total_spaces - get_booked_filled_spaces()
     return render_template('userdashboard.html', user = flask_login.current_user, total_spaces = total_spaces, available_spaces = empty_spaces)
   
-  
+
+################################################################################
+# ---- Back button ----
+################################################################################
+
 @app.route('/back', methods = ['POST'])
 @login_required
 def back():
@@ -153,6 +183,10 @@ def back():
 def signup() :
     return render_template('signup.html')
 
+
+################################################################################
+# ---- Signup Form ---- 
+################################################################################
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def registration() :
@@ -172,7 +206,10 @@ def registration() :
             message = "User already exists!"
     return render_template('signup.html')
     
-
+################################################################################
+# ---- Logout button ----
+################################################################################
+ 
 @app.route('/logout', methods = ['POST'])
 @login_required
 def logout():
@@ -188,6 +225,12 @@ def home() :
 def admin():
     return render_template('admin.html')
 
+
+
+################################################################################
+# ---- Admin Login page ---- 
+################################################################################
+
 @app.route('/admin', methods = ['POST'])
 def adminlogin():
     message = ''
@@ -200,7 +243,11 @@ def adminlogin():
         else :
             message = "Enter valid username and password"
     return render_template('admin.html' , message = message)
-    
+ 
+
+################################################################################
+# ---- Admin Dashboard ---- 
+################################################################################   
 
 @app.route('/admindashboard')
 def admindashboard() :
@@ -214,7 +261,10 @@ def video_feed_webcam():
     return Response(gen_frames_from_webcam(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-
+################################################################################
+# ---- Methods for removing user from booking table and from filled table ----
+################################################################################
+ 
 @app.route('/confirm_checked_rows', methods=['POST'])
 def confirm_checked_rows():
     data = request.get_json()
@@ -244,7 +294,10 @@ def remove_checked_rows():
     except Exception as e:
         return jsonify(success=False, message=str(e)), 500
 
-
+################################################################################
+# ---- Price Calculator ----
+################################################################################
+ 
 @app.route('/price_calculator', methods = ['GET'])
 @login_required
 def price_calculator():
@@ -270,8 +323,11 @@ def bookslot():
     spot_id = request.args.get('spot_id')
     spot_type = request.args.get('spot_type')
     return render_template('booking.html', user = user, spot_id = spot_id, spot_type = spot_type)
-     
-  
+
+################################################################################
+# ---- booking form ---- 
+################################################################################
+      
 @app.route('/bookslot', methods = ['POST'])
 @login_required
 def conf_booking() :

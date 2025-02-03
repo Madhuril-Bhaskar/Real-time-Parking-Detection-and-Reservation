@@ -121,3 +121,9 @@ for box in final_boxes:
 
 # Visualize results
 ensemble_model.visualize_results(image_path, final_boxes)
+
+
+################################################################################
+#    Result -- 
+#    The output is not as expected so, not dropped this model.
+################################################################################

@@ -1,9 +1,26 @@
+################################################################################
+#               Real-Time parking detecttion and reservation                   #                  
+#                                                                              #
+#                         Data Preprocessing                                   #
+#                                                                              #
+################################################################################
+
+
+################################################################################
+#    Loading Libraries        
+################################################################################
+
+
 from pymongo import MongoClient
 from sympy import true
 from werkzeug.security import generate_password_hash
 from users import User
 from flask import jsonify
 
+
+################################################################################
+# configuration for database 
+################################################################################
 
 client = MongoClient("mongodb+srv://piyushseth1998:OA9hxez2jRcHos4I@parking.p4uxw.mongodb.net/")
 parkingdb = client.get_database("parkingdb")
@@ -14,27 +31,44 @@ parking_collection = parkingdb.get_collection("parking")
 filled_collection = parkingdb.get_collection("filled")
 
 
+################################################################################
+# save user 
+################################################################################
 
 def save_user(username, email, mobile, city, noplate, password):
     hash_password = generate_password_hash(password)
     users_collection.insert_one({'_id' : username, 'email' : email,
                                   'mobile': mobile, 'city' : city,
                                   'noplate' : noplate, 'password' : hash_password})
-    
-    
+
+################################################################################
+# fetching user details    
+################################################################################
+   
 def get_user(username) :
     user_data = users_collection.find_one({'_id' : username})
     return User(user_data['_id'], user_data['email'], user_data['mobile'], user_data['city'],
                 user_data['noplate'], user_data['password']) if user_data else None
 
+################################################################################
+# saving admin details
+################################################################################
+
 def save_admin(admin_username, admin_password) :
     hash_password = generate_password_hash(admin_password)
     admin_collection.insert_one({'_id' : admin_username , 'password' : hash_password})
+
+################################################################################
+# getting admin details
+################################################################################
 
 def get_admin(username) :
     admin_data = admin_collection.find_one({'_id' : username})
     return admin_data
 
+################################################################################
+# getting parking details
+################################################################################
 
 def get_parking():
     parking_spots = parking_collection.find()
@@ -47,18 +81,29 @@ def get_parking():
         })
     
     return jsonify(parking_data) 
-        
-        
+
+################################################################################
+# getting total parking spots       
+################################################################################
+       
 def get_total_parking_spaces():
     total_spaces = parking_collection.count_documents({})
     return total_spaces
-    
+
+################################################################################
+# fetching status of user licence number plate    
+################################################################################
+
 def is_car_already_booked(car_number_plate):
     """
     Check if a car with the given number plate is already in the booking table.
     """
     existing_booking = booking_collection.find_one({'car_number_plate': car_number_plate})
     return existing_booking is not None
+
+################################################################################
+# method for spot availability
+################################################################################
 
 def isAvailable() :
     total_spaces = get_total_parking_spaces()
@@ -68,6 +113,10 @@ def isAvailable() :
         return False
     else :
         return True
+
+################################################################################
+# save booking details
+################################################################################
 
 def store_booking(booking_details) :
     if(isAvailable() == False):
@@ -107,15 +156,22 @@ def set_capacity(floor, numberofspot) :
         parking_collection.update_one({'_id' : floor}, {'$set' : {'total_spaces' : numberofspot}})
     else :
         parking_collection.insert_one({'_id' : floor, 'total_spaces' : numberofspot})
- 
+
+################################################################################
+# checking already exist user
+################################################################################
+
 def alreadyexist(booking_details) :
     customer_name = booking_details['customer_name']
     if booking_collection.find_one({'_customer_name' : customer_name}) == None :
         return True
     return False
                
-        
 
+################################################################################
+# initialize parking
+################################################################################
+       
 def initialize_parking_data():
     """
     Initializes parking spot data with id, status, and type for the database.
@@ -150,16 +206,27 @@ def initialize_parking_data():
 
 # Call the function to initialize the data
 #initialize_parking_data()
-    
-    
+
+
+################################################################################
+# getting booked spots data   
+################################################################################
+   
 def get_booking_collection() :
     collection = list(booking_collection.find())
     return collection
 
+################################################################################
+# getting filled spots data
+################################################################################
 
 def get_filled_collection() :
     collection = list(filled_collection.find())
     return collection
+
+################################################################################
+# changing the user to booked to filled
+################################################################################
 
 def booking_to_filled(ids_to_remove) :
     for customer_name in ids_to_remove :
@@ -181,7 +248,7 @@ def booking_to_filled(ids_to_remove) :
 
             filled_collection.insert_one(document)
 
-            
+# remove the user from filled data and make spot empty          
 def remove_from_filled(ids_to_remove) :
     for customer_name in ids_to_remove :
         document = filled_collection.find_one_and_delete({"_customer_name" : customer_name})
