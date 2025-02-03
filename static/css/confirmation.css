@@ -1,0 +1,140 @@
+body {
+    background-color: #fff5f2;
+    height: 100vh;
+}
+.confirmation-card {
+    margin-top: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.confirmation-header {
+    background-color: #f25a29;
+    color: white;
+    padding: 20px;
+    border-radius: 8px 8px 0 0;
+}
+.confirmation-header h1 {
+    margin: 0;
+}
+.table th, .table td {
+    vertical-align: middle;
+}
+.btn-custom {
+    background-color: #f25a29;
+    color: white;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+.btn-custom:hover {
+    background-color: #b42e01;
+    color: white;
+}
+.btn-payment {
+    background-color: #f25a29;
+    color: white;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+.btn-payment:hover {
+    background-color: #b42e01;
+    color: white;
+}
+
+
+.navbar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f25a29;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    height: 100px;
+}
+
+.logo-container {
+    display: flex;
+    margin-left: 35px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.brand-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-top: 13px;
+}
+
+form {
+    margin: 0;
+}
+
+/* Footer Section Customization */
+
+.footer {
+    background-color: #f25a29;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+}
+.footer .text-white{
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.bg-red {
+    background-color: #f25a29;
+}
+
+.footer .text-white:hover {
+    color: #ffffff; /* Change color on hover */
+}
+
+.footer .fab {
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+    color: #ffffff;
+}
+
+.footer .fab:hover {
+    color: #2e2d2d; /* Social media icon hover color */
+}
+
+.footer .f-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer .f-container a {
+    text-decoration: none;
+}
+
+.footer .my-3 a {
+    margin: 0 10px;
+}
+
+.footer .my-3 a:hover {
+    color: #f5576c;
+}
+
+.footer p {
+    font-size: 0.9rem;
+}
+
+/* Add some space between the social media icons and the footer content */
+.footer .my-3 {
+    margin-top: 1rem;
+}
+

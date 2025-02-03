@@ -128,11 +128,11 @@ def initialize_parking_data():
         {'id': 'OP-3', 'status': 'empty', 'type': 'open roof'},
         {'id': 'OP-4', 'status': 'empty', 'type': 'open roof'},
         {'id': 'OP-5', 'status': 'empty', 'type': 'open roof'},
+        {'id': 'OP-6', 'status': 'empty', 'type': 'open roof'},
         {'id': 'IP-1', 'status': 'empty', 'type': 'inner parking'},
         {'id': 'IP-2', 'status': 'empty', 'type': 'inner parking'},
         {'id': 'IP-3', 'status': 'empty', 'type': 'inner parking'},
-        {'id': 'IP-4', 'status': 'empty', 'type': 'inner parking'},
-        {'id': 'IP-5', 'status': 'empty', 'type': 'inner parking'}
+        {'id': 'IP-4', 'status': 'empty', 'type': 'inner parking'}
     ]
     
     # Insert each parking spot data into the collection

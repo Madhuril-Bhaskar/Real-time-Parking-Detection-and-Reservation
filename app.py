@@ -48,10 +48,15 @@ occupied_spots_arduino = 0
 
 def gen_frames_from_webcam():
     cap = cv2.VideoCapture(0) # Capture from video file (or use 0 for webcam)
-    address = "E:/PKLot/PKLot/carPark.mp4"
+    address = "https://192.168.114.82:8080/video"
     cap.open(address)
+    
+    if not cap.isOpened():
+        print("Error: Could not open video stream.")
+        return
 
-    #ser = serial.Serial('COM5', 9600)
+   
+    ser = serial.Serial('COM5', 9600)
     global occupied_spots_yolo
     global occupied_spots_arduino
     while True:
@@ -81,10 +86,10 @@ def gen_frames_from_webcam():
                         occupied_spots_yolo += 1
             
             # Read occupied spots from Arduino
-            #if ser.in_waiting > 0:
-            #    sensor_data = ser.readline().decode('utf-8').strip()  # Read and decode data
-            #    print(f"Sensor Data: {sensor_data}")  # Debug: print the sensor data
-            #    occupied_spots_arduino = int(sensor_data)
+            if ser.in_waiting > 0:
+                sensor_data = ser.readline().decode('utf-8').strip()  # Read and decode data
+                print(f"Sensor Data: {sensor_data}")  # Debug: print the sensor data
+                occupied_spots_arduino = int(sensor_data)
         
             empty_spots = total_spots - occupied_spots_arduino - occupied_spots_yolo
             socketio.emit('update_counts', {'occupied': occupied_spots_yolo + occupied_spots_arduino, 'empty': empty_spots})

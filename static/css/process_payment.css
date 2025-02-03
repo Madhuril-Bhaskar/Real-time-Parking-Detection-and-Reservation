@@ -2,8 +2,7 @@
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #fbdc8f, #f25a29);
-    color: #fff;
+    background-color: #fff5f2;
 }
 
 .confirmation-container {

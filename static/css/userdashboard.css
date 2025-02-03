@@ -11,16 +11,15 @@ body {
 }
 
 .navbar {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
     background-color: #f25a29;
     color: #fff;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 5px 15px;
+    padding: 10px 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     height: 100px;
@@ -28,7 +27,7 @@ body {
 
 .logo-container {
     display: flex;
-    margin-left: 35px;
+    margin-left: 50px;
 }
 
 .logo {
@@ -40,7 +39,7 @@ body {
 .brand-name {
     font-size: 1.8rem;
     font-weight: bold;
-    margin-top: 13px;
+    margin-top: 8px;
 }
 
 form {
@@ -73,7 +72,7 @@ form {
 }
 
 .navbar form:last-child {
-    margin-right: 50px;
+    margin-right: 10px;
 }
 
 
@@ -82,8 +81,11 @@ form {
     margin-left: auto;
     display: flex;
     align-items: center;
-    margin-right: 5px;
 }
+.navbar {
+    justify-content: space-between;
+}
+
 
 .dashboard-container {
     background-color: white;

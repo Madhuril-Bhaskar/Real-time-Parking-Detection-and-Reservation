@@ -21,13 +21,14 @@ import cv2
 import pandas as pd
 from sklearn.metrics import confusion_matrix
 from ultralytics import YOLO
+import torch
 
 ################################################################################
 #    List of generated files       
 ################################################################################
 
 # Define the path to the directory
-post_training_file_path = "E:/PKLot/PKLot/runs/detect/train"
+post_training_file_path = "E:/PKLot/PKLot/runs/detect/train13"
 
 
 # List the files in the directory
@@ -43,7 +44,7 @@ for file in os.listdir(post_training_file_path) :
 def plot_learning_curve(df, train_loss_col, val_loss_col, title) :
     plt.figure(figsize=(20, 10))
     sns.lineplot(data =df,x = 'epoch', y = train_loss_col, label = 'Train Loss' , color = '#141140', linestyle = '-'  , linewidth = 2) # type igonre
-    sns.lineplot(data = df,x = 'epoch', y = train_loss_col, label = 'Val Loss' , color = 'orangered', linestyle = '--' , linewidth = 2)
+    sns.lineplot(data = df,x = 'epoch', y = val_loss_col, label = 'Val Loss' , color = 'orangered', linestyle = '--' , linewidth = 2)
     plt.title(title)
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
@@ -137,10 +138,6 @@ image_files = [f for f in os.listdir(val_iamges_path) if f.endswith('.jpg')]
 num_images = len(image_files)
 selected_images = [image_files[i] for i in range(0, num_images, num_images // 9)]
 
-label_mapping = {
-    'Car': 'Free Space',
-    'free': ' Temp Car'
-}
 
 # Initialize the subplot
 fig, axes = plt.subplots(3, 3, figsize=(20, 21))
@@ -151,14 +148,7 @@ for i, ax in enumerate(axes.flatten()):
     image_path = os.path.join(val_iamges_path, selected_images[i])
     results = best_model.predict(source=image_path, conf=0.5)
     
-    # Remap predicted labels
-    for result in results:
-        for label in result.boxes.data[:, 5]:  
-            original_label = result.names[int(label)]
-            # Replace with mapped label
-            new_label = label_mapping.get(original_label, original_label)  # Use original if not found
-            result.names[int(label)] = new_label  # Update the label in results
-
+    
 
     annotated_image = results[0].plot(line_width=1)
     annotated_image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
@@ -174,15 +164,18 @@ plt.show()
 #    Inference on Unseen Test set Images      
 ################################################################################
 
+# define path to 2nd model
+model_2 = YOLO("E:/PKLot/PKLot/models/fine_tune7.pt")
+
 # Define path to test images
-test_iamges_path = 'E:/PKLot/PKLot/data/test/images'
+test_iamges_path = 'E:/PKLot/PKLot/olddata2/test/images'
 
 # List all jpg images
-image_files = [f for f in os.listdir(test_iamges_path) if f.endswith('.jpg')]
+image_files = [f for f in os.listdir(test_iamges_path)]
 
 # Select 9 images at equal interval
 num_images = len(image_files)
-selected_images = [image_files[i] for i in range(0, num_images, num_images // 9)]
+selected_images = [image_files[i] for i in range(0, num_images)]
 
 # Initialize the subplot
 fig, axes = plt.subplots(3, 3, figsize=(20, 21))
@@ -191,7 +184,7 @@ fig.suptitle('Unseen Set Inferences', fontsize=24)
 # Perform inference on each selected image and display it
 for i, ax in enumerate(axes.flatten()):
     image_path = os.path.join(test_iamges_path, selected_images[i])
-    results = best_model.predict(source=image_path, conf=0.5)
+    results = model_2.predict(source=image_path, conf=0.5)
     
     annotated_image = results[0].plot(line_width=1)
     annotated_image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
@@ -207,57 +200,11 @@ plt.show()
 #    Inference on Unseen Test Images      
 ################################################################################
 
-sample_image_path = 'E:/PKLot/PKLot/data/test/images/2012-09-12_14_12_08.jpg'
+sample_image_path = "C:/Users/HP/Parking detection/Resources/carParkImg.png"
 
+results = model_2.predict(source=sample_image_path , conf = 0.2)
 
-def resize_with_padding(image, target_size=(384, 640)):
-    """
-    Resizes the image to the target size while maintaining the aspect ratio
-    by adding padding if necessary.
-    
-    Args:
-    - image: The input image to be resized.
-    - target_size: A tuple (width, height) representing the target size.
-    
-    Returns:
-    - resized_image: The resized image with padding.
-    """
-    # Get original image dimensions
-    h, w = image.shape[:2]
-    target_w, target_h = target_size
-    
-    # Calculate the scale for resizing
-    scale_w = target_w / w
-    scale_h = target_h / h
-    scale = min(scale_w, scale_h)  # Scale the image while maintaining aspect ratio
-
-    # Compute the new width and height after scaling
-    new_w = int(w * scale)
-    new_h = int(h * scale)
-
-    # Resize the image
-    resized_image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
-
-    # Create a blank canvas with the target size
-    canvas = np.full((target_h, target_w, 3), 128, dtype=np.uint8)  # Fill with gray padding (optional)
-
-    # Compute top-left corner to place the resized image in the center
-    start_x = (target_w - new_w) // 2
-    start_y = (target_h - new_h) // 2
-
-    # Place the resized image onto the canvas
-    canvas[start_y:start_y+new_h, start_x:start_x+new_w] = resized_image
-
-    return canvas
-
-# Example usage
-image = cv2.imread(sample_image_path)
-
-# Resize the image to 1280x720 with padding
-resized_image = resize_with_padding(image, target_size=(1280, 720))
-
-
-results = best_model.predict(source=sample_image_path , conf = 0.2)
+print(results[0].boxes)
 sample_image = results[0].plot(line_width=2)
 sample_image = cv2.cvtColor(sample_image, cv2.COLOR_BGR2RGB)
 
@@ -267,6 +214,12 @@ plt.title("Detected parking space by YOLOv8 ", fontsize = 20)
 plt.axis('off')
 plt.show()
 
+
+################################################################################
+#    Observation : 
+#    -> The model did not perform on new images. There is a need to train the 
+#       model on diverse dataset.
+################################################################################
 
 
 ################################################################################
