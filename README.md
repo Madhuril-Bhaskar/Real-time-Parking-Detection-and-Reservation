@@ -128,7 +128,13 @@ Connect your Arduino to the PC and ensure appropriate sensor connections for rea
 
 ## Contributions
 
-Contributions are welcome! Please fork the repository and create a pull request.
+Contributions are welcome! If you'd like to contribute, please follow these steps:
+
+- Fork the repository.
+- Create a new branch (git checkout -b feature/YourFeatureName).
+- Commit your changes (git commit -m 'Add some feature').
+- Push to the branch (git push origin feature/YourFeatureName).
+- Open a pull request.
 
 ## License
 
