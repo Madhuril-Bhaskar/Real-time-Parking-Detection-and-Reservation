@@ -87,7 +87,38 @@ Connect your Arduino to the PC and ensure appropriate sensor connections for rea
 
 ## Screenshots
 
-*Include relevant screenshots of the system's user interface.*
+### Login
+![Login](screenshots/login_page.png)
+
+### Signup
+![Signup](screenshots/signup_page.png)
+
+### Admin Login
+![Admin Login](screenshots/admin_login.png)
+
+### Userdashboard
+![Userdashboard](screenshots/userdashboard.png)
+
+### Price Calculator
+![Price Calculator](screenshots/price_calculator.png)
+
+### Booking Page
+![Booking Page](screenshots/booking_page.png)
+
+### Booking Form
+![Booking Form](screenshots/Booking_form.png)
+
+### Booking Details
+![Booking Details](screenshots/booking_details.png)
+
+### Payment Page
+![Payment Page](screenshots/Payment_page.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin_page_1.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin_page_2.png)
 
 ## Future Improvements
 
