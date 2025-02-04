@@ -1,4 +1,4 @@
-# Real-time Parking Detection and Reservation
+# ParkEase | Real-time Parking Detection and Reservation
 
 This repository contains the implementation of a **Real-time Parking Detection and Reservation System** using **YOLOv8**, **Flask**, **MongoDB**, and various hardware integrations. The system provides users with real-time parking slot detection and a seamless reservation experience.
 
